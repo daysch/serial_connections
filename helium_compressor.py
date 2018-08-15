@@ -1,9 +1,11 @@
-helcomp_serial_port = 'COM1' # will have to change, most probably
-
-# Python program helium_compressor.py
-
 import serial
 import time
+import os
+
+helcomp_serial_port = 'COM1' # will have to change, most probably
+path = os.path.dirname(__file__) # relative directory path
+
+# Python program helium_compressor.py
 
 # Create an instance of serial object, set serial parameters for Sumitomo F70L Helium Compressor
 ser=serial.Serial()
@@ -60,7 +62,7 @@ timeseconds=time.time()
 timestring=time.ctime(timeseconds)
 
 # Append level and time/date to log file.
-logfile=open('helium_compressor.txt','a')
+logfile=open(path+'\\helium_compressor.txt','a')
 logfile.write(timestring+': ,'+temperatures+', '+pressures+', '+status+'\n')
 logfile.close()
 

@@ -1,10 +1,12 @@
-chiller_serial_port = 'COM1' # will have to change, most probably
-
-# Python program water_chiller.py
-
 import serial
 import time
 import crcmod
+import os
+
+chiller_serial_port = 'COM1' # will have to change, most probably
+path = os.path.dirname(__file__) # relative directory path
+
+# Python program water_chiller.py
 
 # Create an instance of serial object, set serial parameters for water chiller
 ser=serial.Serial()
@@ -46,6 +48,6 @@ timeseconds=time.time()
 timestring=time.ctime(timeseconds)
 
 # Append temperature and time/date to log file.
-logfile=open('water_chiller.txt','a')
+logfile=open(path+'\\water_chiller.txt','a')
 logfile.write(timestring+': , '+tmp_str+'\n')
 logfile.close()

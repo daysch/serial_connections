@@ -1,2 +1,3 @@
 import water_chiller
 import helium_compressor
+import magnet_temp
