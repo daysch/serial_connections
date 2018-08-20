@@ -59,3 +59,5 @@ timestring=time.ctime(timeseconds)
 logfile=open(path+"\\water_chiller.txt",'a')
 logfile.write(timestring+": , "+tmp_str+"\n")
 logfile.close()
+
+print tmp_str

@@ -38,7 +38,7 @@ timestring=time.ctime(timeseconds)
 
 # Append level and time/date to log file.
 logfile=open(path+"\\magnet_temp.txt",'a')
-logfile.write(timestring+": "+temperature+"\n")
+logfile.write(timestring+": ,"+temperature+"\n")
 logfile.close()
 
 # raise error
