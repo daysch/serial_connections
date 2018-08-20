@@ -1,4 +1,4 @@
-tdklambda_serial_port = 'COM1' # will have to change, most probably
+tdklambda_serial_port = "COM8" # may need to change, if serial port number changes
 
 # Python program tdk_lambda.py
 

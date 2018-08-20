@@ -1,15 +1,13 @@
 import serial
 import time
 import os
+from helpers import rec_response
 
-helcomp_serial_port = 'COM1' # will have to change, most probably
-path = os.path.dirname(__file__) # relative directory path
-
-# Python program helium_compressor.py
+helcomp_serial_port = "COM10" # may need to change, if serial port number changes
+path = os.path.dirname(os.path.abspath(__file__)) # relative directory path
 
 # Create an instance of serial object, set serial parameters for Sumitomo F70L Helium Compressor
 ser=serial.Serial()
-
 ser.port=helcomp_serial_port
 ser.baudrate=9600
 ser.bytesize=serial.EIGHTBITS
@@ -21,35 +19,50 @@ ser.xonxoff=0
 # read data
 ser.open()
 # temperatures
-sendstring = '$TEAA4B9\r'
+sendstring = "$TEAA4B9\r"
 ser.flushInput()
 ser.flushOutput()
 ser.write(sendstring)
-temperatures = ser.read(26) # 26 = length of temp response
+temperatures = rec_response(ser)
 time.sleep(0.05) # pause to ensure readiness
+if temperatures == "" or temperatures.split(",")[0] == "$???":
+	ser.close()
+	raise RuntimeError("unable to communicate with equipment (temperature)")
+else:
+	print temperatures
 
 # pressures 
-sendstring = '$PRA95F7\r'
+sendstring = "$PRA95F7\r"
 ser.flushInput()
 ser.flushOutput()
 ser.write(sendstring)
-pressures = ser.read(18) # 18 = length of pressure response
+pressures = rec_response(ser)
 time.sleep(0.05) # pause to ensure readiness
+if pressures == "" or pressures.split(",")[0] == "$???":
+	ser.close()
+	raise RuntimeError("unable to communicate with equipment (pressure)")
+else:
+	print pressures
+
 
 # status 
-sendstring = '$STA3504\r'
+sendstring = "$STA3504\r"
 ser.flushInput()
 ser.flushOutput()
 ser.write(sendstring)
-status = ser.read(15) # 18 = length of pressure response
+status = rec_response(ser)
 time.sleep(0.05) # pause to ensure readiness
-
 ser.close()
+
+if status == "" or status.split(",")[0] == "$???":
+	raise RuntimeError("unable to communicate with equipment (status)")
+else:
+	print status
 
 # interpret status bytes
 if len(status) > 10:
-	status = status.split(',')
-	status[1] = '{:016b}'.format(int(status[1], 16))
+	status = status.split(",")
+	status[1] = "{:016b}".format(int(status[1], 16))
 	status = ",".join(status)
 
 # Unix time is number of seconds since Jan 1, 1970 UTC.
@@ -62,8 +75,8 @@ timeseconds=time.time()
 timestring=time.ctime(timeseconds)
 
 # Append level and time/date to log file.
-logfile=open(path+'\\helium_compressor.txt','a')
-logfile.write(timestring+': ,'+temperatures+', '+pressures+', '+status+'\n')
+logfile=open(path+"\\helium_compressor.txt",'a')
+logfile.write(timestring+": ,"+temperatures+", "+pressures+", "+status+"\n")
 logfile.close()
 
 ## If you ever want to interpret stuff:

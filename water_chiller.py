@@ -3,14 +3,11 @@ import time
 import crcmod
 import os
 
-chiller_serial_port = 'COM1' # will have to change, most probably
-path = os.path.dirname(__file__) # relative directory path
-
-# Python program water_chiller.py
+chiller_serial_port = "COM9" # may need to change, if serial port number changes
+path = os.path.dirname(os.path.abspath(__file__)) # relative directory path
 
 # Create an instance of serial object, set serial parameters for water chiller
 ser=serial.Serial()
-
 ser.port=chiller_serial_port
 ser.baudrate=9600
 ser.bytesize=serial.EIGHTBITS
@@ -31,10 +28,20 @@ ser.close()
 # evaluate response
 response = str(response.encode("hex"))
 if len(response) != 18:
-	tmp_str = "Unable to collect data"
+	# invalid response
+	tmp_str = "ERROR"
+	timeseconds=time.time()
+	timestring=time.ctime(timeseconds)
+	logfile=open(path+"\\water_chiller.txt",'a')
+	logfile.write(timestring+': , '+tmp_str+'\n')
+	logfile.close()
+	raise RuntimeError("unable to communicate with equipment")
 else:
+	# receive temperature format and temp data
 	tmp_format = int(response[10:12], 16)
 	tmp_data = int(int(response[12:16], 16))
+	
+	# format temperature data
 	if tmp_format == 0x10 or tmp_format == 0x11:
 		tmp_data = tmp_data / 10
 	elif tmp_format == 0x20:
@@ -42,12 +49,13 @@ else:
 	tmp_str = str(tmp_data)
 	
 	if tmp_format == 0x01 or tmp_format == 0x11:
-		tmp_str = tmp_str + 'C'
+		tmp_str = tmp_str + "C"
 
+# get time data
 timeseconds=time.time()
 timestring=time.ctime(timeseconds)
 
 # Append temperature and time/date to log file.
-logfile=open(path+'\\water_chiller.txt','a')
-logfile.write(timestring+': , '+tmp_str+'\n')
+logfile=open(path+"\\water_chiller.txt",'a')
+logfile.write(timestring+": , "+tmp_str+"\n")
 logfile.close()

@@ -3,13 +3,11 @@ import time
 import os
 from helpers import rec_response
 
-magtemp_serial_port = 'COM1' # will have to change, most probably
-path = os.path.dirname(__file__) # relative directory path
+magtemp_serial_port = "COM7" # may need to change, if serial port number changes
+path = os.path.dirname(os.path.abspath(__file__)) # relative directory path
 
-# Python program magnet_temp.py
-
+# open serial port
 ser=serial.Serial()
-
 ser.port=magtemp_serial_port
 ser.baudrate=9600
 ser.bytesize=serial.SEVENBITS
@@ -27,12 +25,19 @@ ser.write(sendstring)
 temperature = rec_response(ser)
 ser.close()
 
-print temperature
+# error check
+if temperature == "":
+	temperature = "ERROR"
 
+# get time data
 timeseconds=time.time()
 timestring=time.ctime(timeseconds)
 
 # Append level and time/date to log file.
-logfile=open(path+'\\magnet_temp.txt','a')
-logfile.write(timestring+': '+temperature+'K\n')
+logfile=open(path+"\\magnet_temp.txt",'a')
+logfile.write(timestring+": "+temperature+"K\n")
 logfile.close()
+
+# raise error
+if temperature == "ERROR":
+	raise RuntimeError("unable to communicate with equipment")
