@@ -3,10 +3,10 @@ import traceback
 error_collection = ""
 
 # read equipment
-try:
-	import water_chiller
-except:
-	error_collection += "Failed to read water chiller status:\n\n"+traceback.format_exc()
+# try:
+# 	import water_chiller
+# except:
+# 	error_collection += "Failed to read water chiller status:\n\n"+traceback.format_exc()
 
 try:
 	import helium_compressor

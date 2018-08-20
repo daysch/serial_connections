@@ -25,9 +25,12 @@ ser.write(sendstring)
 temperature = rec_response(ser)
 ser.close()
 
-# error check
+# error check / add Kelvin marker
 if temperature == "":
 	temperature = "ERROR"
+else:
+	temperature = temperature[0:-1] + "K"
+	print temperature
 
 # get time data
 timeseconds=time.time()
@@ -35,7 +38,7 @@ timestring=time.ctime(timeseconds)
 
 # Append level and time/date to log file.
 logfile=open(path+"\\magnet_temp.txt",'a')
-logfile.write(timestring+": "+temperature+"K\n")
+logfile.write(timestring+": "+temperature+"\n")
 logfile.close()
 
 # raise error

@@ -49,7 +49,7 @@ else:
 	tmp_str = str(tmp_data)
 	
 	if tmp_format == 0x01 or tmp_format == 0x11:
-		tmp_str = tmp_str + "C"
+		tmp_str += "C"
 
 # get time data
 timeseconds=time.time()

@@ -44,7 +44,6 @@ if pressures == "" or pressures.split(",")[0] == "$???":
 else:
 	print pressures
 
-
 # status 
 sendstring = "$STA3504\r"
 ser.flushInput()
@@ -54,16 +53,15 @@ status = rec_response(ser)
 time.sleep(0.05) # pause to ensure readiness
 ser.close()
 
-if status == "" or status.split(",")[0] == "$???":
+if status == "" or status.split(",")[0] == "$???" or len(status) <= 10:
 	raise RuntimeError("unable to communicate with equipment (status)")
-else:
-	print status
 
 # interpret status bytes
-if len(status) > 10:
-	status = status.split(",")
-	status[1] = "{:016b}".format(int(status[1], 16))
-	status = ",".join(status)
+status = status.split(",")
+status[1] = "{:016b}".format(int(status[1], 16))
+status = ",".join(status)
+print status
+
 
 # Unix time is number of seconds since Jan 1, 1970 UTC.
 # time.time() returns local time (5 hr or 18000 sec behind UTC).
